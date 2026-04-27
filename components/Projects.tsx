@@ -460,7 +460,7 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                 <MediaImage
                   src={activeImageSrc}
                   alt={activeImageAlt}
-                  className="max-h-full w-auto max-w-full rounded-2xl object-contain shadow-[0_18px_50px_rgba(2,8,23,0.45)]"
+                  className="h-full w-full rounded-2xl object-contain shadow-[0_18px_50px_rgba(2,8,23,0.45)]"
                   fallbackLabel="Adicione a imagem principal do projeto"
                 />
               </div>
@@ -544,7 +544,7 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                       <MediaImage
                         src={gallery[0]?.src ?? project.media[0]?.src}
                         alt={gallery[0]?.label ?? project.name}
-                        className="max-h-full w-auto max-w-full rounded-2xl object-contain shadow-[0_14px_36px_rgba(2,8,23,0.4)]"
+                        className="h-full w-full rounded-2xl object-contain shadow-[0_14px_36px_rgba(2,8,23,0.4)]"
                         fallbackLabel="Adicione image-01.webp para ativar a mídia principal"
                       />
                     </div>
