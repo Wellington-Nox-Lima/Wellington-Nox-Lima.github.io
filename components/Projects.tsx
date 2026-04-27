@@ -649,12 +649,6 @@ function MediaImage({ src, alt, className, fallbackLabel }: MediaImageProps) {
       <div className="relative h-full w-full">
         <img src={DEFAULT_PROJECT_IMAGE} alt={fallbackLabel} className={`${className} opacity-45`} />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(2,8,23,0.28),rgba(2,8,23,0.68))]" />
-        <div className="absolute inset-0 flex items-end justify-start bg-gradient-to-t from-[#020817]/92 via-[#020817]/35 to-transparent p-5">
-          <div>
-            <p className="text-xs uppercase tracking-[0.22em] text-accentSoft">Mídia padrão</p>
-            <p className="mt-2 max-w-[22ch] text-sm leading-6 text-slate-100">{fallbackLabel}</p>
-          </div>
-        </div>
       </div>
     );
   }
