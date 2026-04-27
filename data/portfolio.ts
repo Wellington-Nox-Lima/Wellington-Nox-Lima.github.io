@@ -65,6 +65,11 @@ const createProjectMedia = (slug: string, embedUrl?: string): MediaAsset[] => {
   const media: MediaAsset[] = [
     {
       type: "image",
+      src: withBasePath(`/images/projects/${slug}/image-00.webp`),
+      label: "Imagem 00",
+    },
+    {
+      type: "image",
       src: withBasePath(`/images/projects/${slug}/image-01.webp`),
       label: "Imagem 01",
     },
@@ -84,7 +89,7 @@ const createProjectMedia = (slug: string, embedUrl?: string): MediaAsset[] => {
     media.push({
       type: "embed",
       src: embedUrl,
-      poster: withBasePath(`/images/projects/${slug}/image-01.webp`),
+      poster: withBasePath(`/images/projects/${slug}/image-00.webp`),
       label: "Vídeo demonstrativo",
     });
   }
