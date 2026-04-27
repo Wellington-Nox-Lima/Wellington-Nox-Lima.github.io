@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(94, 234, 212, 0.12), transparent 28%),
+    linear-gradient(180deg, #08111f 0%, #0b1220 45%, #0a101a 100%);
+  font-family: var(--font-sans), sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(94, 234, 212, 0.18);
+  color: #f8fbff;
+}
+
+@keyframes metallic-sheen {
+  0% {
+    transform: translateX(-140%) skewX(-18deg);
+    opacity: 0;
+  }
+
+  14% {
+    opacity: 0.18;
+  }
+
+  38% {
+    transform: translateX(220%) skewX(-18deg);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(220%) skewX(-18deg);
+    opacity: 0;
+  }
+}
+
+@keyframes chip-inner-pulse {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), inset 0 0 10px rgba(255, 255, 255, 0.02);
+  }
+
+  50% {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 0 18px rgba(255, 255, 255, 0.08);
+  }
+}
+
+@layer components {
+  .section-shell {
+    @apply mx-auto max-w-7xl px-6 py-20 sm:px-8 lg:px-12;
+  }
+
+  .section-heading {
+    @apply text-sm font-semibold uppercase tracking-[0.24em] text-accentSoft;
+  }
+
+  .section-title {
+    @apply mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl;
+  }
+
+  .section-copy {
+    @apply mt-5 max-w-3xl text-base leading-8 text-muted sm:text-lg;
+  }
+
+  .panel-card {
+    @apply rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur;
+  }
+
+  .stack-chip {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    animation: chip-inner-pulse 2.8s ease-in-out infinite;
+  }
+
+  .stack-chip::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    width: 38%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.02) 15%,
+      rgba(255, 255, 255, 0.28) 50%,
+      rgba(255, 255, 255, 0.02) 85%,
+      transparent 100%
+    );
+    animation: metallic-sheen 3.8s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
