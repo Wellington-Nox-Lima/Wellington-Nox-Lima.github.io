@@ -407,19 +407,19 @@ type ProjectModalProps = {
 
 function ProjectModal({ project, onClose }: ProjectModalProps) {
   const gallery = useMemo(
-    () => project.media.filter((asset) => asset.type === "image").slice(0, 4),
+    () => project.media.filter((asset) => asset.type === "image").slice(1, 4),
     [project.media],
   );
   const embed = project.media.find((asset) => asset.type === "embed");
   const shouldFillImages = project.name === "Importador e Validador de Planilhas";
-  const [activeImageSrc, setActiveImageSrc] = useState(gallery[0]?.src ?? project.media[0]?.src);
+  const [activeImageSrc, setActiveImageSrc] = useState(gallery[0]?.src ?? project.media[1]?.src);
   const [activeImageAlt, setActiveImageAlt] = useState(gallery[0]?.label ?? project.name);
   const [isImageVisible, setIsImageVisible] = useState(true);
   const overlayTitleClassName = project.overlayTitleClassName ?? "text-white";
   const overlayTextClassName = project.overlayTextClassName ?? "text-slate-200";
 
   useEffect(() => {
-    setActiveImageSrc(gallery[0]?.src ?? project.media[0]?.src);
+    setActiveImageSrc(gallery[0]?.src ?? project.media[1]?.src);
     setActiveImageAlt(gallery[0]?.label ?? project.name);
     setIsImageVisible(true);
   }, [gallery, project]);
@@ -550,7 +550,7 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                         className={`h-full w-full rounded-2xl shadow-[0_14px_36px_rgba(2,8,23,0.4)] ${
                           shouldFillImages ? "object-fill" : "object-contain"
                         }`}
-                        fallbackLabel="Adicione image-00.webp para ativar a mídia principal"
+                        fallbackLabel="Adicione image-01.webp para ativar a mídia principal"
                       />
                     </div>
                   </div>
