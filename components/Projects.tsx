@@ -415,6 +415,7 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
   const [activeImageSrc, setActiveImageSrc] = useState(gallery[0]?.src ?? project.media[1]?.src);
   const [activeImageAlt, setActiveImageAlt] = useState(gallery[0]?.label ?? project.name);
   const [isImageVisible, setIsImageVisible] = useState(true);
+  const [expandedImage, setExpandedImage] = useState<{ src: string; alt: string } | null>(null);
   const overlayTitleClassName = project.overlayTitleClassName ?? "text-white";
   const overlayTextClassName = project.overlayTextClassName ?? "text-slate-200";
 
@@ -457,7 +458,12 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                 isImageVisible ? "opacity-100" : "opacity-0"
               }`}
             >
-              <div className="flex h-full w-full items-center justify-center bg-[#07111f] p-3 sm:p-5 lg:p-6">
+              <button
+                type="button"
+                onClick={() => setExpandedImage({ src: activeImageSrc ?? "", alt: activeImageAlt })}
+                className="flex h-full w-full items-center justify-center bg-[#07111f] p-3 text-left sm:p-5 lg:p-6"
+                aria-label={`Expandir ${activeImageAlt}`}
+              >
                 <MediaImage
                   src={activeImageSrc}
                   alt={activeImageAlt}
@@ -466,15 +472,12 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                   }`}
                   fallbackLabel="Adicione a imagem principal do projeto"
                 />
-              </div>
+              </button>
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-[#101418] via-[#101418]/35 to-transparent" />
 
             <div className="absolute inset-x-0 bottom-0 p-8 sm:p-10">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-accentSoft">
-                Projeto em destaque
-              </div>
-              <h3 className={`mt-5 max-w-3xl text-3xl font-semibold sm:text-5xl ${overlayTitleClassName}`}>
+              <h3 className={`max-w-3xl text-3xl font-semibold sm:text-5xl ${overlayTitleClassName}`}>
                 {project.name}
               </h3>
               <p className={`mt-4 max-w-3xl text-sm leading-7 sm:text-base ${overlayTextClassName}`}>
@@ -482,13 +485,6 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950"
-                >
-                  <Play className="h-4 w-4 fill-current" />
-                  Ver detalhes
-                </button>
                 {project.link ? (
                   <a
                     href={project.link}
@@ -513,17 +509,21 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                     type="button"
                     onClick={() => {
                       changeActiveImage(asset.src, asset.label);
+                      setExpandedImage({ src: asset.src, alt: asset.label });
                     }}
-                    className={`group overflow-hidden rounded-2xl border bg-black/20 text-left transition duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-lg ${
-                      activeImageSrc === asset.src ? "border-accent/60 shadow-glow" : "border-white/10"
+                    className={`group relative overflow-hidden rounded-2xl border bg-black/20 text-left transition duration-300 hover:-translate-y-1.5 hover:border-accent/40 hover:shadow-[0_18px_45px_rgba(56,189,248,0.18)] ${
+                      activeImageSrc === asset.src
+                        ? "scale-[1.03] border-accent/60 shadow-glow"
+                        : "border-white/10 hover:scale-[1.02]"
                     }`}
                     aria-label={`Visualizar ${asset.label}`}
                   >
+                    <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-[#07111f]/70 via-transparent to-[#07111f]/20 opacity-70 transition duration-300 group-hover:opacity-20" />
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <MediaImage
                         src={asset.src}
                         alt={asset.label}
-                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                         fallbackLabel={asset.label}
                       />
                     </div>
@@ -607,6 +607,27 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
           </div>
         </div>
       </div>
+
+      {expandedImage ? (
+        <div
+          className="fixed inset-0 z-[95] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
+          onClick={() => setExpandedImage(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setExpandedImage(null)}
+            className="absolute right-5 top-5 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75"
+            aria-label="Fechar imagem ampliada"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <img
+            src={expandedImage.src}
+            alt={expandedImage.alt}
+            className="max-h-[90vh] max-w-[92vw] rounded-3xl object-contain shadow-[0_30px_80px_rgba(0,0,0,0.45)]"
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

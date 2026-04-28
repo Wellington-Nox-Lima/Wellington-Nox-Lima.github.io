@@ -33,6 +33,14 @@ export function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, []);
+
   const handleCopyEmail = async () => {
     try {
       await navigator.clipboard.writeText(portfolioData.person.email);
