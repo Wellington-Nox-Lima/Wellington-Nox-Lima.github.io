@@ -2,10 +2,10 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build-portfolio",
+      "label": "dev-portfolio",
       "type": "shell",
       "command": "npm.cmd",
-      "args": ["run", "build"],
+      "args": ["run", "dev"],
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -13,10 +13,6 @@
         "reveal": "always",
         "panel": "shared",
         "clear": true
-      },
-      "group": {
-        "kind": "build",
-        "isDefault": true
       },
       "problemMatcher": []
     }
