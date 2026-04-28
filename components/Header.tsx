@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Check, Copy, Mail, MessageCircle } from "lucide-react";
 import { portfolioData } from "@/data/portfolio";
@@ -8,8 +9,7 @@ const navItems = [
   { label: "Sobre", href: "#sobre" },
   { label: "Stack", href: "#stack" },
   { label: "Projetos", href: "#projetos" },
-  { label: "Experiencia", href: "#experiencia" },
-  { label: "GitHub", href: "#github" },
+  { label: "Experiência", href: "#experiencia" },
   { label: "Contato", href: "#contato" },
 ];
 
@@ -19,7 +19,7 @@ export function Header() {
   const contactRef = useRef<HTMLDivElement | null>(null);
   const whatsappNumber = "5519983267236";
   const whatsappMessage =
-    "Olá, Wellington. Vi seu portfólio e gostaria de iniciar um contato sobre uma oportunidade/projeto.";
+    "Olá, Wellington. Vi seu portfólio e gostaria de iniciar um contato sobre uma oportunidade ou projeto.";
   const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
   useEffect(() => {
@@ -54,10 +54,18 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-surface/75 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
-        <a href="#inicio" className="flex flex-col">
-          <span className="text-sm font-semibold text-white">
-            {portfolioData.person.name.split(" ")[0]}
-          </span>
+        <a
+          href="#inicio"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] shadow-[0_12px_30px_rgba(3,10,22,0.35)] transition hover:border-accent/40 hover:bg-white/[0.05]"
+          aria-label={`Ir para o topo do portfólio de ${portfolioData.person.name}`}
+        >
+          <Image
+            src="/brand-icon.png"
+            alt="Ícone WL"
+            width={28}
+            height={28}
+            className="h-7 w-7 rounded-full object-cover"
+          />
         </a>
 
         <nav className="hidden items-center gap-6 text-sm text-muted lg:flex">
