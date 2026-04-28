@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { Check, Copy, Mail, MessageCircle } from "lucide-react";
+import { Check, Copy, Mail, Menu, MessageCircle, X } from "lucide-react";
 import { portfolioData } from "@/data/portfolio";
 
 const navItems = [
@@ -15,6 +15,7 @@ const navItems = [
 
 export function Header() {
   const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const contactRef = useRef<HTMLDivElement | null>(null);
   const whatsappNumber = "5519983267236";
@@ -45,6 +46,14 @@ export function Header() {
     }
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
+
   const handleCopyEmail = async () => {
     try {
       await navigator.clipboard.writeText(portfolioData.person.email);
@@ -57,7 +66,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-surface/75 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-8 sm:py-4 lg:px-12">
         <a
           href="#inicio"
           className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] shadow-[0_12px_30px_rgba(3,10,22,0.35)] transition hover:border-accent/40 hover:bg-white/[0.05]"
@@ -80,17 +89,30 @@ export function Header() {
           ))}
         </nav>
 
-        <div ref={contactRef} className="relative">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              setIsMenuOpen(true);
+              setIsContactOpen(false);
+            }}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-muted transition hover:border-white/25 hover:text-white lg:hidden"
+            aria-label="Abrir menu"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+
+          <div ref={contactRef} className="relative">
           <button
             type="button"
             onClick={() => setIsContactOpen((current) => !current)}
-            className="rounded-full border border-accent/30 bg-accent/10 px-4 py-2 text-sm font-semibold text-accentSoft transition hover:border-accent/50 hover:bg-accent/15"
+            className="rounded-full border border-accent/30 bg-accent/10 px-3.5 py-2 text-sm font-semibold text-accentSoft transition hover:border-accent/50 hover:bg-accent/15 sm:px-4"
           >
             Falar comigo
           </button>
 
           {isContactOpen ? (
-            <div className="absolute right-0 top-[calc(100%+12px)] w-[290px] rounded-3xl border border-white/10 bg-surface/95 p-3 shadow-2xl backdrop-blur-xl">
+            <div className="absolute right-0 top-[calc(100%+10px)] w-[calc(100vw-2rem)] max-w-[290px] rounded-2xl border border-white/10 bg-surface/95 p-3 shadow-2xl backdrop-blur-xl sm:top-[calc(100%+12px)] sm:rounded-3xl">
               <p className="px-3 pb-2 text-xs uppercase tracking-[0.22em] text-accentSoft">
                 Escolha o contato
               </p>
@@ -140,8 +162,63 @@ export function Header() {
               </a>
             </div>
           ) : null}
+          </div>
         </div>
       </div>
+
+      {isMenuOpen ? (
+        <div className="fixed inset-0 z-[90] lg:hidden">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => setIsMenuOpen(false)}
+            aria-label="Fechar menu"
+          />
+
+          <aside className="absolute right-0 top-0 flex h-dvh w-[82vw] max-w-[340px] flex-col border-l border-white/10 bg-surface shadow-2xl">
+            <div className="flex items-center justify-between border-b border-white/10 px-4 py-4">
+              <a
+                href="#inicio"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]"
+                aria-label={`Ir para o topo do portfólio de ${portfolioData.person.name}`}
+              >
+                <Image
+                  src="/brand-icon.png"
+                  alt="Ícone WL"
+                  width={28}
+                  height={28}
+                  className="h-7 w-7 rounded-full object-cover"
+                />
+              </a>
+
+              <button
+                type="button"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white"
+                aria-label="Fechar menu"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <nav className="grid gap-2 px-4 py-5">
+              {navItems.map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-base font-semibold text-white transition hover:border-accent/30 hover:bg-white/[0.06]"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+
+            <div className="mt-auto border-t border-white/10 p-4" />
+          </aside>
+        </div>
+      ) : null}
     </header>
   );
 }
