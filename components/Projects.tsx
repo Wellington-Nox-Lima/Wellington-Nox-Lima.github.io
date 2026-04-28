@@ -414,14 +414,22 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
   const shouldFillImages = project.name === "Importador e Validador de Planilhas";
   const [activeImageSrc, setActiveImageSrc] = useState(gallery[0]?.src ?? project.media[1]?.src);
   const [activeImageAlt, setActiveImageAlt] = useState(gallery[0]?.label ?? project.name);
+  const [previewImage, setPreviewImage] = useState<{ src: string; alt: string } | null>(null);
   const [isImageVisible, setIsImageVisible] = useState(true);
   const [expandedImage, setExpandedImage] = useState<{ src: string; alt: string } | null>(null);
   const overlayTitleClassName = project.overlayTitleClassName ?? "text-white";
   const overlayTextClassName = project.overlayTextClassName ?? "text-slate-200";
+  const displayedImageSrc = previewImage?.src ?? activeImageSrc;
+  const displayedImageAlt = previewImage?.alt ?? activeImageAlt;
+  const displayedImageIndex = Math.max(
+    gallery.findIndex((asset) => asset.src === displayedImageSrc),
+    0,
+  );
 
   useEffect(() => {
     setActiveImageSrc(gallery[0]?.src ?? project.media[1]?.src);
     setActiveImageAlt(gallery[0]?.label ?? project.name);
+    setPreviewImage(null);
     setIsImageVisible(true);
   }, [gallery, project]);
 
@@ -437,6 +445,30 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
       setActiveImageAlt(alt);
       setIsImageVisible(true);
     }, 190);
+  };
+
+  const openExpandedImage = (src: string, alt: string) => {
+    setExpandedImage({ src, alt });
+  };
+
+  const navigateExpandedImage = (direction: "prev" | "next") => {
+    if (!gallery.length || !expandedImage) {
+      return;
+    }
+
+    const currentIndex = gallery.findIndex((asset) => asset.src === expandedImage.src);
+    const fallbackIndex = currentIndex >= 0 ? currentIndex : displayedImageIndex;
+    const nextIndex =
+      direction === "next"
+        ? (fallbackIndex + 1) % gallery.length
+        : (fallbackIndex - 1 + gallery.length) % gallery.length;
+
+    const nextImage = gallery[nextIndex];
+    if (!nextImage) {
+      return;
+    }
+
+    setExpandedImage({ src: nextImage.src, alt: nextImage.label });
   };
 
   return (
@@ -460,13 +492,13 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
             >
               <button
                 type="button"
-                onClick={() => setExpandedImage({ src: activeImageSrc ?? "", alt: activeImageAlt })}
+                onClick={() => openExpandedImage(displayedImageSrc ?? "", displayedImageAlt)}
                 className="flex h-full w-full items-center justify-center bg-[#07111f] p-3 text-left sm:p-5 lg:p-6"
-                aria-label={`Expandir ${activeImageAlt}`}
+                aria-label={`Expandir ${displayedImageAlt}`}
               >
                 <MediaImage
-                  src={activeImageSrc}
-                  alt={activeImageAlt}
+                  src={displayedImageSrc}
+                  alt={displayedImageAlt}
                   className={`h-full w-full rounded-2xl shadow-[0_18px_50px_rgba(2,8,23,0.45)] ${
                     shouldFillImages ? "object-fill" : "object-contain"
                   }`}
@@ -509,10 +541,12 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                     type="button"
                     onClick={() => {
                       changeActiveImage(asset.src, asset.label);
-                      setExpandedImage({ src: asset.src, alt: asset.label });
+                      openExpandedImage(asset.src, asset.label);
                     }}
+                    onMouseEnter={() => setPreviewImage({ src: asset.src, alt: asset.label })}
+                    onMouseLeave={() => setPreviewImage(null)}
                     className={`group relative overflow-hidden rounded-2xl border bg-black/20 text-left transition duration-300 hover:-translate-y-1.5 hover:border-accent/40 hover:shadow-[0_18px_45px_rgba(56,189,248,0.18)] ${
-                      activeImageSrc === asset.src
+                      displayedImageSrc === asset.src
                         ? "scale-[1.03] border-accent/60 shadow-glow"
                         : "border-white/10 hover:scale-[1.02]"
                     }`}
@@ -545,8 +579,8 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
                   <div className="relative aspect-[16/9] overflow-hidden">
                     <div className="flex h-full w-full items-center justify-center bg-[#07111f] p-3 sm:p-4">
                       <MediaImage
-                        src={activeImageSrc}
-                        alt={activeImageAlt}
+                        src={displayedImageSrc}
+                        alt={displayedImageAlt}
                         className={`h-full w-full rounded-2xl shadow-[0_14px_36px_rgba(2,8,23,0.4)] ${
                           shouldFillImages ? "object-fill" : "object-contain"
                         }`}
@@ -615,11 +649,36 @@ function ProjectModal({ project, onClose }: ProjectModalProps) {
         >
           <button
             type="button"
-            onClick={() => setExpandedImage(null)}
+            onClick={(event) => {
+              event.stopPropagation();
+              navigateExpandedImage("prev");
+            }}
+            className="absolute left-5 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75"
+            aria-label="Imagem anterior"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              setExpandedImage(null);
+            }}
             className="absolute right-5 top-5 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75"
             aria-label="Fechar imagem ampliada"
           >
             <X className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              navigateExpandedImage("next");
+            }}
+            className="absolute right-5 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75"
+            aria-label="Próxima imagem"
+          >
+            <ArrowRight className="h-5 w-5" />
           </button>
           <img
             src={expandedImage.src}

@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   title: "Wellington José de Lima | Analista de Sistemas e Desenvolvedor",
   description:
     "Portfólio profissional com foco em sistemas corporativos, desenvolvimento web, banco de dados e automação de processos.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
