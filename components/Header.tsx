@@ -39,6 +39,10 @@ export function Header() {
     }
 
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
+    if (window.location.hash === "#inicio") {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
   }, []);
 
   const handleCopyEmail = async () => {

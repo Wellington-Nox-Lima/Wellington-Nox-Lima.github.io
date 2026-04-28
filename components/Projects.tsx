@@ -122,16 +122,6 @@ export function Projects() {
       setActiveIndex(closestIndex);
     };
 
-    const firstCard = cardRefs.current[0];
-
-    if (firstCard) {
-      firstCard.scrollIntoView({
-        behavior: "auto",
-        block: "nearest",
-        inline: "center",
-      });
-    }
-
     window.requestAnimationFrame(updateActiveCard);
     scroller.addEventListener("scroll", updateActiveCard, { passive: true });
 
