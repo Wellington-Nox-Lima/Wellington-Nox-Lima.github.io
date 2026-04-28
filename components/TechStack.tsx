@@ -10,15 +10,15 @@ export function TechStack() {
         corporativos.
       </p>
 
-      <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:mt-12 sm:gap-6 md:grid-cols-2 xl:grid-cols-3">
         {portfolioData.technologies.map((group) => (
-          <article key={group.title} className="panel-card p-7">
+          <article key={group.title} className="panel-card p-5 sm:p-7">
             <h3 className="text-lg font-semibold text-white">{group.title}</h3>
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-4 flex flex-wrap gap-2 sm:mt-5">
               {group.items.map((item) => (
                 <span
                   key={item}
-                  className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-muted"
+                  className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[13px] text-muted sm:py-2 sm:text-sm"
                 >
                   {item}
                 </span>

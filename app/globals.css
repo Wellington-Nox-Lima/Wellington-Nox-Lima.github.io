@@ -65,25 +65,53 @@ a {
   }
 }
 
+@keyframes hero-fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(26px) scale(0.985);
+    filter: blur(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes hero-panel-glow {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+    box-shadow: 0 0 0 rgba(94, 234, 212, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    box-shadow: 0 18px 50px rgba(94, 234, 212, 0.08);
+  }
+}
+
 @layer components {
   .section-shell {
-    @apply mx-auto max-w-7xl px-6 py-20 sm:px-8 lg:px-12;
+    @apply mx-auto max-w-7xl px-4 py-14 sm:px-8 sm:py-20 lg:px-12;
   }
 
   .section-heading {
-    @apply text-sm font-semibold uppercase tracking-[0.24em] text-accentSoft;
+    @apply text-xs font-semibold uppercase tracking-[0.2em] text-accentSoft sm:text-sm sm:tracking-[0.24em];
   }
 
   .section-title {
-    @apply mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl;
+    @apply mt-3 text-2xl font-semibold tracking-tight text-white sm:mt-4 sm:text-4xl;
   }
 
   .section-copy {
-    @apply mt-5 max-w-3xl text-base leading-8 text-muted sm:text-lg;
+    @apply mt-4 max-w-3xl text-[15px] leading-7 text-muted sm:mt-5 sm:text-lg sm:leading-8;
   }
 
   .panel-card {
-    @apply rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur;
+    @apply rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur sm:rounded-3xl;
   }
 
   .stack-chip {
@@ -109,5 +137,62 @@ a {
     animation: metallic-sheen 3.8s linear infinite;
     pointer-events: none;
     z-index: -1;
+  }
+
+  .hero-intro {
+    position: relative;
+  }
+
+  .hero-intro::before {
+    content: "";
+    position: absolute;
+    top: -2.5rem;
+    left: -1rem;
+    width: min(20rem, 45vw);
+    height: min(20rem, 45vw);
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(94, 234, 212, 0.12) 0%, rgba(94, 234, 212, 0) 72%);
+    filter: blur(12px);
+    opacity: 0;
+    animation: hero-fade-up 0.9s ease-out 0.08s forwards;
+    pointer-events: none;
+  }
+
+  .hero-reveal {
+    opacity: 0;
+    animation: hero-fade-up 0.78s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    will-change: transform, opacity, filter;
+  }
+
+  .hero-delay-1 {
+    animation-delay: 0.08s;
+  }
+
+  .hero-delay-2 {
+    animation-delay: 0.16s;
+  }
+
+  .hero-delay-3 {
+    animation-delay: 0.26s;
+  }
+
+  .hero-delay-4 {
+    animation-delay: 0.36s;
+  }
+
+  .hero-delay-5 {
+    animation-delay: 0.46s;
+  }
+
+  .panel-card.hero-reveal,
+  .hero-reveal.panel-card {
+    animation-name: hero-panel-glow;
+    animation-duration: 0.88s;
+  }
+
+  .about-reveal {
+    opacity: 0;
+    animation: hero-fade-up 0.72s cubic-bezier(0.22, 1, 0.36, 1) 0.96s forwards;
+    will-change: transform, opacity, filter;
   }
 }
