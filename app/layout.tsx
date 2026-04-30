@@ -15,7 +15,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Wellington José de Lima | Analista de Sistemas e Desenvolvedor",
   description:
-    "Portfólio profissional com foco em sistemas corporativos, desenvolvimento web, banco de dados e automação de processos.",
+    "Apresentação profissional com foco em sistemas corporativos, desenvolvimento web, banco de dados e automação de processos.",
   icons: {
     icon: "/brand-icon.png",
     shortcut: "/brand-icon.png",
