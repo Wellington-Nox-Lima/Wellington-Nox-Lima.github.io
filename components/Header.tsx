@@ -1,224 +1,232 @@
 "use client";
 
-import Image from "next/image";
+import { ArrowUpRight, Linkedin, Mail, Menu, MessageCircle, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Check, Copy, Mail, Menu, MessageCircle, X } from "lucide-react";
-import { portfolioData } from "@/data/portfolio";
+import { CopyButton } from "@/components/CopyButton";
+import { LogoMark } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { navItems, person, whatsappHref } from "@/data/portfolio";
 
-const navItems = [
-  { label: "Sobre", href: "#sobre" },
-  { label: "Stack", href: "#stack" },
-  { label: "Projetos", href: "#projetos" },
-  { label: "Experiência", href: "#experiencia" },
-  { label: "Contato", href: "#contato" },
-];
+// "inicio" e "contato" não estão no menu: ao passar por eles, nenhum item fica destacado.
+const observedSections = ["inicio", ...navItems.map((item) => item.href.slice(1)), "contato"];
+
+function ContactLinks({ onNavigate }: { onNavigate?: () => void }) {
+  return (
+    <div className="grid gap-1.5">
+      <div className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-raised">
+        <Mail className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+        <a href={`mailto:${person.email}`} onClick={onNavigate} className="min-w-0 flex-1">
+          <span className="block text-sm font-medium">E-mail</span>
+          <span className="block truncate text-sm text-muted">{person.email}</span>
+        </a>
+        <CopyButton value={person.email} label="Copiar e-mail" />
+      </div>
+      <a
+        href={whatsappHref}
+        target="_blank"
+        rel="noreferrer"
+        onClick={onNavigate}
+        className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-raised"
+      >
+        <MessageCircle className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-medium">WhatsApp</span>
+          <span className="block text-sm text-muted">{person.whatsapp.display}</span>
+        </span>
+        <ArrowUpRight className="h-4 w-4 text-subtle" aria-hidden="true" />
+      </a>
+      <a
+        href={person.linkedin}
+        target="_blank"
+        rel="noreferrer"
+        onClick={onNavigate}
+        className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-raised"
+      >
+        <Linkedin className="h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-medium">LinkedIn</span>
+          <span className="block text-sm text-muted">/in/{person.linkedinHandle}</span>
+        </span>
+        <ArrowUpRight className="h-4 w-4 text-subtle" aria-hidden="true" />
+      </a>
+    </div>
+  );
+}
 
 export function Header() {
-  const [isContactOpen, setIsContactOpen] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
   const contactRef = useRef<HTMLDivElement | null>(null);
-  const whatsappNumber = "5519983267236";
-  const whatsappMessage =
-    "Olá, Wellington. Vi seu portfólio e gostaria de iniciar um contato sobre uma oportunidade ou projeto.";
-  const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (!contactRef.current?.contains(event.target as Node)) {
-        setIsContactOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
+  // Abre no topo, salvo quando o link aponta para uma seção.
   useEffect(() => {
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
     }
-
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-
-    if (window.location.hash === "#inicio") {
-      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    if (!window.location.hash || window.location.hash === "#inicio") {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     }
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? "hidden" : "";
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
+  // Destaca no menu a seção que está no meio da tela.
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(entry.target.id);
+        });
+      },
+      { rootMargin: "-45% 0px -50% 0px" },
+    );
+    observedSections.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) observer.observe(element);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const onPointerDown = (event: MouseEvent) => {
+      if (!contactRef.current?.contains(event.target as Node)) setContactOpen(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setContactOpen(false);
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isMenuOpen]);
-
-  const handleCopyEmail = async () => {
-    try {
-      await navigator.clipboard.writeText(portfolioData.person.email);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1600);
-    } catch {
-      setCopied(false);
-    }
-  };
+  }, [menuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-surface/75 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-8 sm:py-4 lg:px-12">
-        <a
-          href="#inicio"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] shadow-[0_12px_30px_rgba(3,10,22,0.35)] transition hover:border-accent/40 hover:bg-white/[0.05]"
-          aria-label={`Ir para o topo do portfólio de ${portfolioData.person.name}`}
-        >
-          <Image
-            src="/brand-icon.png"
-            alt="Ícone WL"
-            width={28}
-            height={28}
-            className="h-7 w-7 rounded-full object-cover"
-          />
-        </a>
+    <>
+      <header
+        className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
+          scrolled ? "border-line bg-bg/80 backdrop-blur-xl" : "border-transparent bg-bg/0"
+        }`}
+      >
+        <div className="container-page flex h-16 items-center justify-between gap-4">
+          <a href="#inicio" className="flex items-center gap-3" aria-label="Ir para o início">
+            <LogoMark className="h-8 w-8" />
+            <span className="text-sm font-semibold tracking-tight">{person.shortName}</span>
+          </a>
 
-        <nav className="hidden items-center gap-6 text-sm text-muted lg:flex">
-          {navItems.map((item) => (
-            <a key={item.href} href={item.href} className="transition hover:text-white">
-              {item.label}
-            </a>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button
-            type="button"
-            onClick={() => {
-              setIsMenuOpen(true);
-              setIsContactOpen(false);
-            }}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-muted transition hover:border-white/25 hover:text-white lg:hidden"
-            aria-label="Abrir menu"
-          >
-            <Menu className="h-5 w-5" />
-          </button>
-
-          <div ref={contactRef} className="relative">
-          <button
-            type="button"
-            onClick={() => setIsContactOpen((current) => !current)}
-            className="rounded-full border border-accent/30 bg-accent/10 px-3.5 py-2 text-sm font-semibold text-accentSoft transition hover:border-accent/50 hover:bg-accent/15 sm:px-4"
-          >
-            Falar comigo
-          </button>
-
-          {isContactOpen ? (
-            <div className="absolute right-0 top-[calc(100%+10px)] w-[calc(100vw-2rem)] max-w-[290px] rounded-2xl border border-white/10 bg-surface/95 p-3 shadow-2xl backdrop-blur-xl sm:top-[calc(100%+12px)] sm:rounded-3xl">
-              <p className="px-3 pb-2 text-xs uppercase tracking-[0.22em] text-accentSoft">
-                Escolha o contato
-              </p>
-
-              <a
-                href={`mailto:${portfolioData.person.email}`}
-                className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 pr-3 transition hover:border-white/20 hover:bg-white/[0.05]"
-              >
-                <Mail className="mt-0.5 h-4 w-4 text-accentSoft" />
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-semibold text-white">Enviar email</span>
-                  <span className="mt-1 block break-all text-sm text-muted">
-                    {portfolioData.person.email}
-                  </span>
-                </span>
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    handleCopyEmail();
-                  }}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-black/20 text-muted transition hover:border-white/20 hover:text-white"
-                  aria-label="Copiar email"
-                  title="Copiar email"
-                >
-                  {copied ? (
-                    <Check className="h-4 w-4 text-accentSoft" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </button>
-              </a>
-
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-3 flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 transition hover:border-white/20 hover:bg-white/[0.05]"
-              >
-                <MessageCircle className="mt-0.5 h-4 w-4 text-accentSoft" />
-                <span>
-                  <span className="block text-sm font-semibold text-white">Enviar mensagem</span>
-                  <span className="mt-1 block text-sm text-muted">
-                    WhatsApp: (19) 98326-7236
-                  </span>
-                </span>
-              </a>
-            </div>
-          ) : null}
-          </div>
-        </div>
-      </div>
-
-      {isMenuOpen ? (
-        <div className="fixed inset-0 z-[90] lg:hidden">
-          <button
-            type="button"
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-            onClick={() => setIsMenuOpen(false)}
-            aria-label="Fechar menu"
-          />
-
-          <aside className="absolute right-0 top-0 flex h-dvh w-[82vw] max-w-[340px] flex-col border-l border-white/10 bg-surface shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/10 px-4 py-4">
-              <a
-                href="#inicio"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]"
-                aria-label={`Ir para o topo do portfólio de ${portfolioData.person.name}`}
-              >
-                <Image
-                  src="/brand-icon.png"
-                  alt="Ícone WL"
-                  width={28}
-                  height={28}
-                  className="h-7 w-7 rounded-full object-cover"
-                />
-              </a>
-
-              <button
-                type="button"
-                onClick={() => setIsMenuOpen(false)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white"
-                aria-label="Fechar menu"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <nav className="grid gap-2 px-4 py-5">
-              {navItems.map((item) => (
+          <nav aria-label="Seções" className="hidden items-center gap-1 lg:flex">
+            {navItems.map((item) => {
+              const isActive = active === item.href.slice(1);
+              return (
                 <a
                   key={item.href}
                   href={item.href}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-base font-semibold text-white transition hover:border-accent/30 hover:bg-white/[0.06]"
+                  aria-current={isActive ? "true" : undefined}
+                  className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
+                    isActive ? "bg-raised text-ink" : "text-muted hover:text-ink"
+                  }`}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+
+            <div ref={contactRef} className="relative hidden sm:block">
+              <button
+                type="button"
+                onClick={() => setContactOpen((open) => !open)}
+                aria-expanded={contactOpen}
+                aria-haspopup="true"
+                className="inline-flex h-9 items-center rounded-full bg-ink px-4 text-sm font-medium text-bg transition-colors hover:bg-ink/85"
+              >
+                Falar comigo
+              </button>
+              {contactOpen ? (
+                <div className="card absolute right-0 top-[calc(100%+10px)] w-[300px] p-2 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.35)]">
+                  <p className="eyebrow px-3 pb-1 pt-2">Escolha o canal</p>
+                  <ContactLinks onNavigate={() => setContactOpen(false)} />
+                </div>
+              ) : null}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setMenuOpen(true)}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line bg-surface text-muted transition-colors hover:text-ink lg:hidden"
+              aria-label="Abrir menu"
+              aria-expanded={menuOpen}
+            >
+              <Menu className="h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Fora do <header>: o backdrop-blur dele viraria a referência do position: fixed. */}
+      {menuOpen ? (
+        <div className="fixed inset-0 z-[90] lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setMenuOpen(false)}
+            aria-label="Fechar menu"
+          />
+          <aside className="absolute right-0 top-0 flex h-dvh w-[86vw] max-w-[360px] flex-col border-l border-line bg-bg">
+            <div className="flex h-16 items-center justify-between border-b border-line px-4">
+              <span className="flex items-center gap-3">
+                <LogoMark className="h-8 w-8" />
+                <span className="text-sm font-semibold">{person.shortName}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setMenuOpen(false)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line bg-surface"
+                aria-label="Fechar menu"
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+            </div>
+            <nav aria-label="Seções" className="grid gap-1 p-4">
+              {[...navItems, { label: "Contato", href: "#contato" }].map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded-xl px-3 py-3 text-base font-medium transition-colors hover:bg-raised"
                 >
                   {item.label}
                 </a>
               ))}
             </nav>
-
-            <div className="mt-auto border-t border-white/10 p-4" />
+            <div className="mt-auto border-t border-line p-4">
+              <p className="eyebrow px-3 pb-2">Contato</p>
+              <ContactLinks onNavigate={() => setMenuOpen(false)} />
+            </div>
           </aside>
         </div>
       ) : null}
-    </header>
+    </>
   );
 }
