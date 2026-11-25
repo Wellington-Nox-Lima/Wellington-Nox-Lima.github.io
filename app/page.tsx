@@ -1,26 +1,31 @@
-import { About } from "@/components/About";
 import { Contact } from "@/components/Contact";
-import { Experience } from "@/components/Experience";
+import { Deliveries } from "@/components/Deliveries";
 import { Footer } from "@/components/Footer";
-// import { GithubSection } from "@/components/GithubSection";
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
-import { Projects } from "@/components/Projects";
-import { TechStack } from "@/components/TechStack";
+import { Method } from "@/components/Method";
+import { Results } from "@/components/Results";
+import { Timeline } from "@/components/Timeline";
 
 export default function Home() {
   return (
-    <main className="relative overflow-hidden">
-      <div className="absolute inset-0 -z-10 bg-grid bg-[size:72px_72px] opacity-[0.06]" />
+    <>
+      <a
+        href="#conteudo"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-ink focus:px-4 focus:py-2 focus:text-bg"
+      >
+        Pular para o conteúdo
+      </a>
       <Header />
-      <Hero />
-      <About />
-      <TechStack />
-      <Projects />
-      <Experience />
-      {/* <GithubSection /> */}
-      <Contact />
+      <main id="conteudo">
+        <Hero />
+        <Results />
+        <Deliveries />
+        <Method />
+        <Timeline />
+        <Contact />
+      </main>
       <Footer />
-    </main>
+    </>
   );
 }

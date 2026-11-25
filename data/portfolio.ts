@@ -1,288 +1,272 @@
-import { withBasePath } from "@/lib/base-path";
+/*
+ * Todo o conteúdo do site fica aqui. Os componentes só cuidam da apresentação.
+ *
+ * O site apresenta RESULTADOS do trabalho todo (não só da migração): o que mudou para quem usa, com o número
+ * quando ele existe. Cada número tem fonte (código, spec ou levantamento). Número que não foi medido não entra.
+ * Sem detalhe técnico: o específico entra como uma linha nas listas por área.
+ * Sem números de PR, nomes de produto interno, de clientes ou de concorrentes: o site é público.
+ */
 
-export type TechnologyGroup = {
-  title: string;
-  items: string[];
-};
-
-export type Project = {
-  name: string;
-  summary: string;
-  problem: string;
-  stack: string[];
-  isConfidential?: boolean;
-  role: string;
-  impact: string;
-  media: MediaAsset[];
-  overlayPanelClassName?: string;
-  overlayTagClassName?: string;
-  overlayTitleClassName?: string;
-  overlayTextClassName?: string;
-  overlayChipClassName?: string;
-  link?: string;
-  privacyNote?: string;
-};
-
-export type MediaAsset =
-  | {
-      type: "image";
-      src: string;
-      label: string;
-      poster?: string;
-    }
-  | {
-      type: "embed";
-      src: string;
-      label: string;
-      poster?: string;
-    };
-
-export type ExperienceItem = {
-  role: string;
-  company: string;
-  period: string;
-  context: string;
-  responsibilities: string[];
-  technologies: string[];
-  deliveryType: string;
-};
-
-const personalInfo = {
+export const person = {
   name: "Wellington José de Lima",
-  title: "Analista de Sistemas | Desenvolvedor .NET | Dados e Automação RPA",
-  location: "Paulínia, São Paulo - SP",
+  shortName: "Wellington Lima",
+  role: "Desenvolvedor .NET full stack",
+  location: "Paulínia, SP",
   email: "wel.nox.dev@gmail.com",
   github: "https://github.com/Wellington-Nox-Lima",
+  githubHandle: "Wellington-Nox-Lima",
   linkedin: "https://www.linkedin.com/in/wellingtonjlima/",
+  linkedinHandle: "wellingtonjlima",
+  whatsapp: {
+    number: "5519983267236",
+    display: "(19) 98326-7236",
+    message:
+      "Olá, Wellington. Vi seu portfólio e gostaria de conversar sobre uma oportunidade ou projeto.",
+  },
 };
 
-const experienceDefaults = {
-  company: "Aplicativo.Net / Sistema de Gestão Clínica",
-  period: "2024 - Atual",
+export const whatsappHref = `https://wa.me/${person.whatsapp.number}?text=${encodeURIComponent(
+  person.whatsapp.message,
+)}`;
+
+export const hero = {
+  role: "Desenvolvedor .NET full stack · SaaS de gestão para clínicas",
+  headline: { before: "Software que devolve", highlight: "tempo e segurança", after: "às clínicas." },
+  sub:
+    "Trabalho num sistema usado por clínicas médicas e odontológicas, da agenda ao financeiro, do prontuário à migração de dados. Cada entrega minha é contada pelo que mudou para quem usa.",
 };
 
-const createProjectMedia = (slug: string, embedUrl?: string): MediaAsset[] => {
-  const media: MediaAsset[] = [
-    {
-      type: "image",
-      src: withBasePath(`/images/projects/${slug}/image-00.webp`),
-      label: "Imagem 00",
-    },
-    {
-      type: "image",
-      src: withBasePath(`/images/projects/${slug}/image-01.webp`),
-      label: "Imagem 01",
-    },
-    {
-      type: "image",
-      src: withBasePath(`/images/projects/${slug}/image-02.webp`),
-      label: "Imagem 02",
-    },
-    {
-      type: "image",
-      src: withBasePath(`/images/projects/${slug}/image-03.webp`),
-      label: "Imagem 03",
-    },
-  ];
-
-  if (embedUrl) {
-    media.push({
-      type: "embed",
-      src: embedUrl,
-      poster: withBasePath(`/images/projects/${slug}/image-00.webp`),
-      label: "Vídeo demonstrativo",
-    });
-  }
-
-  return media;
+/** Antes e depois de um resultado. O antes pode ser um número ou uma situação. */
+export type Figure = {
+  before?: string;
+  after: string;
+  delta?: string;
 };
 
-const technologies: TechnologyGroup[] = [
+export type ResultItem = Figure & {
+  area: string;
+  title: string;
+  text: string;
+};
+
+export const resultsIntro =
+  "Seis entregas de áreas diferentes do produto, contadas pelo efeito para quem usa: a clínica, o paciente, o comercial e a equipe.";
+
+/*
+ * Fontes:
+ * - Tempos (45 dias → 12 h, 1 dia → 1 h, 1 h → 5 min, sem prazo → 12 h): operação de migração, informados por mim.
+ *   "1 dia" foi contado como 8 h de trabalho: −87% é o piso (em tempo corrido, seria −96%).
+ * - 477 clínicas / 553 migrações: chamados com "migra" no título que passaram pelo meu nome em qualquer fila,
+ *   de out/2024 a nov/2026 (consulta só de leitura em 12/11/2026). Fora: correções, chamados de código e
+ *   tabela de preço sem "migra" no título.
+ * - Demais itens: código e specs das entregas.
+ */
+export const results: ResultItem[] = [
   {
-    title: "Backend",
-    items: ["C#", ".NET Framework", "ASP.NET MVC", "Web API", "Entity Framework"],
+    area: "Migração de dados",
+    before: "45 dias",
+    after: "12 h",
+    delta: "−99%",
+    title: "A clínica nova começa a trabalhar em horas, não em um mês e meio.",
+    text: "Tempo para preparar os dados de uma clínica que chega de outro sistema. Foram 477 clínicas desde 2024.",
   },
   {
-    title: "Frontend",
-    items: ["JavaScript", "jQuery", "HTML", "CSS", "Tailwind CSS"],
+    area: "Vendas",
+    before: "1 dia",
+    after: "1 h",
+    delta: "−87%",
+    title: "O comercial sabe o que migra antes de fechar o contrato.",
+    text: "Tempo para analisar o backup de uma clínica em negociação e mostrar o que vem do sistema antigo e o que não vem.",
   },
   {
-    title: "Banco de Dados",
-    items: ["SQL Server", "T-SQL", "Views", "Stored Procedures", "Redis"],
+    area: "Privacidade",
+    before: "link público",
+    after: "só com login",
+    title: "A foto do paciente só abre para quem tem acesso.",
+    text: "Antes, bastava ter o endereço da imagem para ver a foto. Hoje é assim em todas as telas.",
   },
   {
-    title: "Ferramentas",
-    items: ["Azure DevOps", "Git", "Excel", "ClosedXML", "Visual Studio"],
+    area: "Acesso",
+    before: "tela travada",
+    after: "abre normal",
+    title: "Clínicas com computador antigo voltaram a entrar no sistema.",
+    text: "Em navegadores antigos a tela ficava carregando sem fim. Agora abre, e quem está desatualizado recebe um aviso sem ser barrado.",
   },
   {
-    title: "Automação / Integrações",
-    items: ["Power Automate", "Importação CSV", "Importação Excel", "APIs internas"],
+    area: "Financeiro",
+    before: "cobrado 2×",
+    after: "cobrado 1×",
+    title: "Quem já pagou o boleto não é cobrado de novo.",
+    text: "Fim da cobrança em duplicidade de boletos já pagos, e o valor devido passou a somar juros, multa e desconto.",
+  },
+  {
+    area: "Agenda",
+    before: "só no mouse",
+    after: "no toque",
+    title: "Marcar consulta pelo celular e pelo tablet.",
+    text: "Agendar pelo toque passou a funcionar nos 8 calendários do sistema.",
   },
 ];
 
-const projects: Project[] = [
+export const deliveryAreas: { id: string; title: string; note?: string; items: string[] }[] = [
   {
-    name: "Sistema de Gestão Clínica",
-    summary:
-      "Aplicação web voltada ao suporte de rotinas administrativas, operacionais e cadastrais, com foco em organização de processos, regras de negócio e manutenção de dados.",
-    problem:
-      "Centralizar operações antes dispersas em fluxos manuais e telas desconectadas, reduzindo inconsistências e melhorando o controle do processo.",
-    stack: [],
-    isConfidential: true,
-    role:
-      "Atuação em manutenção evolutiva, implementação de regras de negócio, ajustes de interface e suporte a consultas SQL e estruturas de dados.",
-    impact:
-      "Maior rastreabilidade operacional, redução de erros cadastrais e sustentação mais segura para processos críticos do negócio.",
-    media: createProjectMedia(
-      "sistema-gestao-clinica",
-      "https://www.youtube.com/embed/YUrfe4BX6OI",
-    ),
-    overlayPanelClassName: "border-white/12 bg-slate-950/88",
-    overlayTagClassName: "border-white/15 bg-black/40 text-accentSoft",
-    overlayTitleClassName: "text-white",
-    overlayTextClassName: "text-slate-200",
-    overlayChipClassName: "border-white/15 bg-black/35 text-slate-100",
-    privacyNote:
-      "Código-fonte privado por confidencialidade, com foco aqui na apresentação da solução, arquitetura e resultados.",
+    id: "migracao",
+    title: "Migração de dados",
+    items: [
+      "Preparar os dados de uma clínica: de 45 dias para 10, e depois para 12 horas.",
+      "Analisar o backup de uma venda: de 1 dia para 1 hora.",
+      "E-mail de validação para o cliente: de 1 hora para 5 minutos.",
+      "Ajuste depois da migração: de sem prazo para 12 horas, feito pela tela e com desfazer.",
+      "A clínica traz 12 tipos de dado em vez de 6, com imagens e documentos dos pacientes.",
+      "Fila de migração acompanhada dentro do sistema, no lugar de um painel externo.",
+      "Backup de outro sistema migrado sem 4 ferramentas externas (em revisão final).",
+    ],
   },
   {
-    name: "Importador e Validador de Planilhas",
-    summary:
-      "Solução ETL para importação, validação e tratamento de dados em massa a partir de arquivos de backup.",
-    problem:
-      "Fluxos de importação com alto volume de erro manual e inconsistências no formato dos dados comprometiam a velocidade da operação.",
-    stack: ["Python", "SQL Server", "Pandas", "Pillow (PIL)", "Tkinter", "OpenPyXL"],
-    role:
-      "Desenvolvimento de rotina ETL para leitura, validação, padronização, tratamento de exceções e integração com o banco para persistência segura dos dados.",
-    impact:
-      "Redução de erros manuais e ganho de velocidade em fluxos de importação, com melhor qualidade na entrada de dados.",
-    media: createProjectMedia("importador-validador-planilhas"),
-    overlayPanelClassName: "border-cyan-100/15 bg-slate-950/90",
-    overlayTagClassName: "border-cyan-200/20 bg-slate-950/75 text-cyan-100",
-    overlayTitleClassName: "text-white",
-    overlayTextClassName: "text-slate-100",
-    overlayChipClassName: "border-cyan-100/20 bg-slate-950/55 text-slate-50",
+    id: "agenda",
+    title: "Agenda",
+    items: [
+      "Marcar consultas pelo toque, no celular e no tablet, nos 8 calendários.",
+      "Agenda por consultório respeitando o intervalo configurado.",
+      "Texto do agendamento legível em qualquer cor de fundo.",
+      "Compromissos recorrentes com o limite de 90 dias à vista.",
+      "Agendamento online não vira mais compromisso, e a restrição de agenda voltou a valer.",
+    ],
   },
   {
-    name: "Dashboard Operacional e Financeiro",
-    summary:
-      "Painel para visualização e consolidação de indicadores operacionais e financeiros a partir de consultas SQL e regras de agrupamento.",
-    problem:
-      "As informações estavam fragmentadas em fontes distintas, dificultando o acompanhamento de métricas e a tomada de decisão.",
-    stack: ["SQL Server", "C#", "JavaScript", "HTML", "CSS"],
-    role:
-      "Construção de consultas, regras de consolidação, camada de exibição e refinamento da leitura analítica do painel.",
-    impact:
-      "Melhor visibilidade sobre indicadores-chave e apoio mais rápido a análises operacionais e gerenciais.",
-    media: createProjectMedia("dashboard-operacional-financeiro"),
-    overlayPanelClassName: "border-white/12 bg-slate-950/88",
-    overlayTagClassName: "border-white/15 bg-black/40 text-accentSoft",
-    overlayTitleClassName: "text-white",
-    overlayTextClassName: "text-slate-200",
-    overlayChipClassName: "border-white/15 bg-black/35 text-slate-100",
-    privacyNote:
-      "Código-fonte privado por confidencialidade, com foco aqui na apresentação da solução, arquitetura e resultados.",
+    id: "seguranca",
+    title: "Segurança e acesso",
+    items: [
+      "Fotos de pacientes e profissionais só com login, em todas as telas.",
+      "Cada pessoa vê a própria foto em todas as clínicas em que tem cadastro.",
+      "Clínicas com computador antigo voltaram a entrar, com um aviso que não bloqueia.",
+      "Anexos com acento no nome voltaram a baixar.",
+    ],
   },
   {
-    name: "Fluxo Interno de Solicitações",
-    summary:
-      "Estrutura para acompanhamento de demandas internas, priorização, status e rastreabilidade de atividades operacionais.",
-    problem:
-      "Solicitações internas eram geridas de forma dispersa, dificultando priorização, acompanhamento e transparência do fluxo.",
-    stack: ["ASP.NET MVC", "SQL Server", "JavaScript"],
-    role:
-      "Implementação de melhorias, evolução das telas, manutenção das regras do fluxo e acompanhamento do ciclo de entrega.",
-    impact:
-      "Organização mais clara das demandas internas e melhor acompanhamento das etapas executadas.",
-    media: createProjectMedia("fluxo-interno-solicitacoes"),
-    overlayPanelClassName: "border-white/12 bg-slate-950/88",
-    overlayTagClassName: "border-white/15 bg-black/40 text-accentSoft",
-    overlayTitleClassName: "text-white",
-    overlayTextClassName: "text-slate-200",
-    overlayChipClassName: "border-white/15 bg-black/35 text-slate-100",
+    id: "prontuario",
+    title: "Prontuário e cadastro",
+    items: [
+      "Vários procedimentos concluídos de uma vez, sem perder a ordem do tratamento.",
+      "O prontuário mostra o dado novo logo depois de salvar.",
+      "A mesma pessoa pode ser paciente em mais de uma clínica sem conflito de CPF.",
+      "Quadro de próteses do laboratório utilizável no toque.",
+      "Contrato e anamnese impressos com as assinaturas alinhadas.",
+    ],
+  },
+  {
+    id: "financeiro",
+    title: "Financeiro e fiscal",
+    items: [
+      "Título que vence hoje não aparece mais como vencido.",
+      "Nota fiscal de serviço no padrão da reforma tributária, com o paciente no documento.",
+      "Guias de convênio com número longo ou com letras passaram a ser aceitas.",
+      "Recibo com a data em que o pagamento compensou.",
+      "Relatório mostra de onde veio cada paciente captado.",
+    ],
+  },
+  {
+    id: "atendimento",
+    title: "Autoatendimento e mensagens",
+    items: [
+      "O totem voltou a enviar SMS.",
+      "Paciente que responde “não vou poder ir” tem a consulta desmarcada.",
+      "PIX do boleto direto no totem, também para contas a vencer.",
+      "Receita digital sem recadastrar o profissional em cada clínica.",
+      "Créditos de SMS da virada do mês visíveis no histórico.",
+    ],
+  },
+  {
+    id: "legado",
+    title: "Sistema antigo",
+    note: "2025",
+    items: [
+      "Fim da cobrança em duplicidade de boletos já pagos.",
+      "Valor devido com juros, multa e desconto.",
+      "PIX copia e cola no financeiro do paciente.",
+      "Quem usava os layouts antigos foi levado para o padrão automaticamente.",
+      "Pedido de ajuda direto no WhatsApp do suporte.",
+    ],
   },
 ];
 
-const experience: ExperienceItem[] = [
+export const principles = [
   {
-    role: "Analista de Sistemas / Desenvolvedor",
-    company: experienceDefaults.company,
-    period: experienceDefaults.period,
-    context:
-      "Atuação em sistemas corporativos com foco em manutenção, evolução de funcionalidades, consistência de dados e suporte a processos operacionais.",
-    responsibilities: [
-      "Desenvolvimento e manutenção de módulos web em ambiente corporativo",
-      "Criação e ajuste de consultas SQL, procedures e rotinas de importação",
-      "Implementação de regras de negócio e validações para fluxos internos",
-      "Apoio técnico a operações ligadas a dados, cadastros e automações",
-    ],
-    technologies: [
-      "C#",
-      "ASP.NET MVC",
-      "SQL Server",
-      "JavaScript",
-      "jQuery",
-      "Redis",
-      "Azure DevOps",
-    ],
-    deliveryType:
-      "Entrega de melhorias evolutivas, correções, automações internas e sustentação técnica de aplicações de negócio.",
+    icon: "search",
+    title: "Olho os dados antes de mexer",
+    text: "Confirmo o problema no dado real e mostro o número de antes e de depois.",
   },
-];
+  {
+    icon: "layers",
+    title: "Corrijo a causa",
+    text: "Quando acho um problema, corrijo a origem e todos os lugares parecidos, não só o caso que chegou.",
+  },
+  {
+    icon: "repeat",
+    title: "Transformo o repetitivo em ferramenta",
+    text: "Se uma tarefa se repete, ela vira ferramenta. Foi assim que 45 dias viraram 12 horas.",
+  },
+  {
+    icon: "shield",
+    title: "Protejo os dados das clínicas",
+    text: "Nenhuma correção vai direto para o sistema: toda mudança é revisada e pode ser desfeita.",
+  },
+  {
+    icon: "file",
+    title: "Escrevo antes de construir",
+    text: "Projeto grande começa com as decisões no papel, aprovadas antes do código.",
+  },
+  {
+    icon: "bot",
+    title: "Uso IA com revisão humana",
+    text: "A IA acelera o dia a dia, e nada vai para o ar sem passar por revisão.",
+  },
+] as const;
 
-export const portfolioData = {
-  person: {
-    name: personalInfo.name,
-    title: personalInfo.title,
-    shortPitch:
-      "Soluções corporativas com foco em sistemas web, dados, automação e estabilidade operacional.",
-    summary:
-      "Analista de Sistemas e Desenvolvedor com experiência em aplicações web, banco de dados, automação de processos e tratamento de dados. Atuo principalmente com C#, ASP.NET MVC, SQL Server e JavaScript, desenvolvendo soluções corporativas, rotinas de importação, regras de negócio e melhorias operacionais.",
-    location: personalInfo.location,
-    email: personalInfo.email,
-    github: personalInfo.github,
-    linkedin: personalInfo.linkedin,
-  },
-  about: {
-    overview:
-      "Minha atuação é voltada à sustentação e evolução de sistemas corporativos, com atenção especial para consistência de dados, regras de negócio e eficiência operacional. Trabalho bem em ambientes onde confiabilidade, manutenção contínua e entendimento do processo fazem diferença real no resultado entregue.",
-    technicalProfile:
-      "Tenho experiência prática em desenvolvimento e manutenção de aplicações web em stack Microsoft, consultas SQL complexas, importação e saneamento de dados, automação de fluxos internos e integração entre rotinas de negócio e operações do dia a dia.",
-    coreAreas: [
-      "Desenvolvimento e manutenção de aplicações web corporativas",
-      "Consultas SQL, modelagem relacional e análise de dados",
-      "Importação, validação, padronização e migração de dados",
-      "Automação de processos internos e redução de tarefas manuais",
-    ],
-    problemsSolved: [
-      "Fluxos operacionais dependentes de retrabalho manual",
-      "Dados inconsistentes entre planilhas, sistemas e bases relacionais",
-      "Regras de negócio complexas distribuídas em aplicações legadas",
-      "Necessidade de visibilidade operacional por meio de dashboards e consultas consolidadas",
-    ],
-    differentiators: [
-      "Visão técnica orientada a contexto de negócio",
-      "Capacidade de atuar tanto em backend quanto em banco de dados e automação",
-      "Experiência com manutenção evolutiva em ambientes corporativos reais",
-      "Foco em soluções estáveis, legíveis e adequadas ao cenário operacional",
-    ],
-  },
-  technologies,
-  projects,
-  experience,
-  github: {
-    title: "GitHub como extensão da prática técnica",
-    copy:
-      "Esta seção foi pensada para reforçar a prova técnica do trabalho desenvolvido: repositórios organizados, projetos públicos, estudos direcionados e implementações que demonstram a evolução da base técnica ao longo do tempo.",
-    highlights: [
-      "Estrutura de repositórios com foco em clareza e contexto técnico",
-      "Projetos públicos para demonstrar código, organização e decisões de implementação",
-      "Estudos práticos sobre backend, banco de dados, frontend e automação",
-      "Histórico que evidencia consistência, evolução profissional e repertório técnico",
-    ],
-  },
-  contact: {
-    closing:
-      "Se você busca um profissional com experiência prática em sistemas, dados, manutenção evolutiva e automação de processos, estou aberto a conversar sobre oportunidades, projetos e colaborações técnicas.",
-  },
+export const experience = {
+  company: "Aplicativo.Net",
+  role: "Desenvolvedor .NET full stack",
+  period: "2024 – atual",
+  summary:
+    "Sistema de gestão usado por clínicas médicas e odontológicas: agenda, prontuário, financeiro, autoatendimento e migração de dados. Comecei na migração de dados em 2024, desenvolvi no sistema antigo em 2025 e hoje trabalho no sistema novo e nas ferramentas de migração.",
 };
+
+export const timeline = [
+  {
+    period: "out – nov/2026",
+    title: "Produto e migração completa",
+    text: "Clínicas com computador antigo voltam a entrar, o totem volta a enviar SMS e a migração passa a trazer 12 tipos de dado.",
+  },
+  {
+    period: "ago – out/2026",
+    title: "Ferramentas de migração com IA",
+    text: "Preparar uma migração cai para 12 horas, a análise de venda para 1 hora, e o ajuste pós-carga passa a ser feito pela tela.",
+  },
+  {
+    period: "jul – ago/2026",
+    title: "Sistema novo",
+    text: "Fotos de pacientes só com login e agenda que funciona no toque.",
+  },
+  {
+    period: "fev – jun/2026",
+    title: "App de migração",
+    text: "Preparar uma migração cai de 45 para 10 dias.",
+  },
+  {
+    period: "jul – dez/2025",
+    title: "Sistema antigo",
+    text: "Fim da cobrança em duplicidade de boletos e PIX copia e cola no financeiro do paciente.",
+  },
+  {
+    period: "2024 – jan/2026",
+    title: "Migração de dados manual",
+    text: "Cada clínica pedia um trabalho do zero: 45 dias para preparar os dados. Desse gargalo nasceram as ferramentas.",
+  },
+];
+
+export const navItems = [
+  { label: "Resultados", href: "#resultados" },
+  { label: "Entregas", href: "#entregas" },
+  { label: "Como trabalho", href: "#metodo" },
+  { label: "Trajetória", href: "#trajetoria" },
+];

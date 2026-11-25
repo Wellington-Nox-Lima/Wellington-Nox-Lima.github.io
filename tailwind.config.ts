@@ -1,6 +1,9 @@
 import type { Config } from "tailwindcss";
 
+const token = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
+
 const config: Config = {
+  darkMode: "class",
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,23 +12,37 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        surface: "#0b1220",
-        panel: "#111a2b",
-        line: "#22304a",
-        accent: "#5eead4",
-        accentSoft: "#99f6e4",
-        text: "#e5eefb",
-        muted: "#9fb0c7"
+        bg: token("bg"),
+        surface: token("surface"),
+        raised: token("raised"),
+        ink: token("ink"),
+        muted: token("muted"),
+        subtle: token("subtle"),
+        line: token("line"),
+        accent: token("accent"),
+        "accent-ink": token("accent-ink"),
+        ok: token("ok"),
+        warn: token("warn"),
       },
-      boxShadow: {
-        glow: "0 20px 80px rgba(94, 234, 212, 0.12)"
+      fontFamily: {
+        sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "monospace"],
       },
-      backgroundImage: {
-        grid: "linear-gradient(rgba(159, 176, 199, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(159, 176, 199, 0.08) 1px, transparent 1px)"
-      }
-    }
+      maxWidth: {
+        page: "72rem",
+      },
+      keyframes: {
+        "pulse-dot": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.35" },
+        },
+      },
+      animation: {
+        "pulse-dot": "pulse-dot 1.8s ease-in-out infinite",
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 };
 
 export default config;
